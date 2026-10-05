@@ -1,4 +1,9 @@
-import chalk from 'chalk';
+import { passerCommande } from './orderManager.js';
+import { logSuccess } from './logger.js';
 
-console.log(chalk.green.bold('=== STAGE NUMERUM DEV CENTER ==='));
-console.log(chalk.blue('Bienvenue dans le programme Node.js Intensif - Jour 1 !'));
+logSuccess('=== JOUR 3 : SYSTÈME D\'ÉVÉNEMENTS ===');
+
+// Test de passage de commandes
+passerCommande('Koffi', 'MacBook Pro', 1);
+console.log('-----------------------------------');
+passerCommande('Awa', 'Écran Dell 27"', 2);
