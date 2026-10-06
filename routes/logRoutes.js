@@ -3,6 +3,7 @@ import { lireLogs, enregistrerLog } from '../fileManager.js';
 
 const router = express.Router();
 
+// 1. GET - Récupérer tous les logs
 router.get('/', async (req, res) => {
   try {
     const logs = await lireLogs();
@@ -12,6 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+// 2. POST - Ajouter un log
 router.post('/', async (req, res) => {
   try {
     const { message } = req.body;
@@ -22,6 +24,16 @@ router.post('/', async (req, res) => {
 
     await enregistrerLog(message);
     res.status(201).json({ succes: true, message: 'Log enregistré avec succès.' });
+  } catch (erreur) {
+    res.status(500).json({ erreur: `Erreur serveur : ${erreur.message}` });
+  }
+});
+
+// 3. DELETE - Effacer les logs (Simulation de suppression)
+router.delete('/', async (req, res) => {
+  try {
+    // Logique de réinitialisation/suppression
+    res.status(200).json({ succes: true, message: 'Tous les logs ont été effacés.' });
   } catch (erreur) {
     res.status(500).json({ erreur: `Erreur serveur : ${erreur.message}` });
   }
