@@ -1,42 +1,21 @@
 import express from 'express';
-import { lireLogs, enregistrerLog } from './fileManager.js';
+import { requestLogger } from './middlewares/loggerMiddleware.js';
+import logRoutes from './routes/logRoutes.js';
 import { logSuccess } from './logger.js';
 
 const app = express();
 const PORT = 3000;
 
-// Middleware pour pouvoir lire le JSON envoyé par un client
+// Middlewares globaux
 app.use(express.json());
+app.use(requestLogger);
 
-// Route 1 : Page d'accueil (GET)
+// Déclaration des routes modularisées
+app.use('/logs', logRoutes);
+
+// Route Accueil
 app.get('/', (req, res) => {
-  res.send('<h1>Bienvenue sur l\'API Express - Numerum Dev Center</h1><p>Allez sur <a href="/logs">/logs</a> pour voir l\'historique.</p>');
-});
-
-// Route 2 : Consulter les logs (GET)
-app.get('/logs', async (req, res) => {
-  try {
-    const logs = await lireLogs();
-    res.type('text/plain').send(logs || 'Aucun log enregistré pour le moment.');
-  } catch (erreur) {
-    res.status(500).send(`Erreur serveur : ${erreur.message}`);
-  }
-});
-
-// Route 3 : Ajouter un nouveau log (POST)
-app.post('/logs', async (req, res) => {
-  try {
-    const { message } = req.body;
-
-    if (!message) {
-      return res.status(400).json({ erreur: 'Le champ "message" est obligatoire.' });
-    }
-
-    await enregistrerLog(message);
-    res.status(201).json({ succes: true, message: 'Log enregistré avec succès.' });
-  } catch (erreur) {
-    res.status(500).json({ erreur: `Erreur serveur : ${erreur.message}` });
-  }
+  res.send('<h1>API Express Modularisée - Numerum Dev Center</h1><p>Allez sur <a href="/logs">/logs</a> pour voir l\'historique.</p>');
 });
 
 // Démarrage du serveur
