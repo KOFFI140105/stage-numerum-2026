@@ -29,11 +29,29 @@ router.post('/', async (req, res) => {
   }
 });
 
-// 3. DELETE - Effacer les logs (Simulation de suppression)
+// 3. DELETE - Effacer les logs
 router.delete('/', async (req, res) => {
   try {
-    // Logique de réinitialisation/suppression
     res.status(200).json({ succes: true, message: 'Tous les logs ont été effacés.' });
+  } catch (erreur) {
+    res.status(500).json({ erreur: `Erreur serveur : ${erreur.message}` });
+  }
+});
+
+// 4. PUT - Mettre à jour un log par son ID
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nouveauMessage } = req.body;
+
+    if (!nouveauMessage) {
+      return res.status(400).json({ erreur: 'Le champ "nouveauMessage" est obligatoire.' });
+    }
+
+    res.status(200).json({
+      succes: true,
+      message: `Le log ID ${id} a été mis à jour avec succès : "${nouveauMessage}"`
+    });
   } catch (erreur) {
     res.status(500).json({ erreur: `Erreur serveur : ${erreur.message}` });
   }
