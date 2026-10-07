@@ -1,30 +1,37 @@
 import fs from 'fs/promises';
-import { logSuccess, logError, logInfo } from './logger.js';
+import path from 'path';
 
-const FILE_PATH = './logs.txt';
+const filePath = path.resolve('logs.txt');
 
-// Enregistrer une ligne dans le fichier
-export async function enregistrerLog(message) {
-  const horodatage = new Date().toISOString();
-  const ligne = `[${horodatage}] ${message}\n`;
-
+// 1. Lire tous les logs
+export const lireLogs = async () => {
   try {
-    await fs.appendFile(FILE_PATH, ligne, 'utf8');
-    logSuccess(`Log enregistré dans ${FILE_PATH}`);
+    const data = await fs.readFile(filePath, 'utf-8');
+    return data;
   } catch (erreur) {
-    logError(`Erreur lors de l'écriture du log : ${erreur.message}`);
+    if (erreur.code === 'ENOENT') {
+      return ''; // Fichier inexistant = pas de log
+    }
+    throw erreur;
   }
-}
+};
 
-// Nouvelle fonction (Jour 5) : Lire le contenu du fichier
-export async function lireLogs() {
+// 2. Enregistrer un log horodaté
+export const enregistrerLog = async (message) => {
   try {
-    const contenu = await fs.readFile(FILE_PATH, 'utf8');
-    logInfo('--- CONTENU ACTUEL DE LOGS.TXT ---');
-    console.log(contenu);
-    return contenu;
+    const dateActuelle = new Date().toISOString();
+    const entreeLog = `[${dateActuelle}] - ${message}\n`;
+    await fs.appendFile(filePath, entreeLog, 'utf-8');
   } catch (erreur) {
-    logError(`Impossible de lire le fichier : ${erreur.message}`);
-    return null;
+    throw erreur;
   }
-}
+};
+
+// 3. Effacer tous les logs
+export const effacerLogs = async () => {
+  try {
+    await fs.writeFile(filePath, '', 'utf-8');
+  } catch (erreur) {
+    throw erreur;
+  }
+};
