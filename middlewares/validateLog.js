@@ -1,15 +1,28 @@
-// Middleware pour vérifier que le message est présent et non vide
-export const validerLog = (req, res, next) => {
-  const { message, nouveauMessage } = req.body;
-  const contenu = message || nouveauMessage;
+// middlewares/validateLog.js
+export const validateLog = (req, res, next) => {
+  const { titre, description, statut } = req.body;
 
-  if (!contenu || contenu.trim() === '') {
+  if (!titre || titre.trim() === '') {
     return res.status(400).json({
       succes: false,
-      erreur: 'Le contenu du log ne peut pas être vide.'
+      erreur: 'Le champ "titre" est obligatoire.'
     });
   }
 
-  // Passer au contrôleur/routeur suivant
+  if (!description || description.trim() === '') {
+    return res.status(400).json({
+      succes: false,
+      erreur: 'Le champ "description" est obligatoire.'
+    });
+  }
+
+  const statutsAutorises = ['en_cours', 'termine', 'en_attente'];
+  if (statut && !statutsAutorises.includes(statut)) {
+    return res.status(400).json({
+      succes: false,
+      erreur: `Le statut doit être l'un des suivants : ${statutsAutorises.join(', ')}`
+    });
+  }
+
   next();
 };
